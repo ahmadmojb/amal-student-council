@@ -1,0 +1,22 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "public": {
+      ".read": true,
+      ".write": false
+    },
+    "content": {
+      ".read": false,
+      ".write": false
+    },
+    "private": {
+      ".read": false,
+      ".write": false
+    },
+    "system": {
+      ".read": false,
+      ".write": false
+    }
+  }
+}

@@ -1,0 +1,82 @@
+/*
+ * Design tokens — Amal School Student Council
+ * Brand: light blue #5CBFE8 and lime #BECC32 are used as identity colours
+ * (bands, fills, focus), never for small text on white: their darker partners
+ * (--blue-700, --lime-800) carry text and meet WCAG AA contrast.
+ */
+:root {
+  /* Brand */
+  --blue-500: #5cbfe8;
+  --blue-600: #2fa3d4;
+  --blue-700: #136d96; /* 5.6:1 on white */
+  --blue-900: #0b3d56;
+  --blue-50: #ebf7fd;
+  --blue-100: #d3eefa;
+
+  --lime-500: #becc32;
+  --lime-600: #a3b01f;
+  --lime-800: #56600a; /* 7.0:1 on white */
+  --lime-50: #f6f9dd;
+  --lime-100: #ecf1b8;
+
+  /* Neutrals (cool, to sit with the blue) */
+  --ink: #0f2a3d;
+  --ink-2: #3c5466; /* muted text, 7.6:1 */
+  --ink-3: #5f7484; /* secondary meta, 4.8:1 */
+  --paper: #f5f8fa;
+  --surface: #ffffff;
+  --surface-2: #eef3f6;
+  --line: #d6e1e8;
+  --line-strong: #b8c8d3;
+
+  /* Status */
+  --success: #17703f;
+  --success-bg: #e3f4ea;
+  --warning: #8a5a00;
+  --warning-bg: #fff3d1;
+  --danger: #b42318;
+  --danger-bg: #fde8e6;
+  --info: var(--blue-700);
+  --info-bg: var(--blue-50);
+
+  /* Type — one family, a modular scale (1.25) on a 16px base */
+  --font: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, system-ui, sans-serif;
+  --fs-xs: 0.8125rem;
+  --fs-sm: 0.9375rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.1875rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 1.875rem;
+  --fs-3xl: 2.375rem;
+  --fs-4xl: 3rem;
+  --lh-body: 1.75;
+  --lh-tight: 1.3;
+
+  /* Space (4px grid) */
+  --s1: 0.25rem;
+  --s2: 0.5rem;
+  --s3: 0.75rem;
+  --s4: 1rem;
+  --s5: 1.5rem;
+  --s6: 2rem;
+  --s7: 3rem;
+  --s8: 4rem;
+
+  /* Shape — radius encodes hierarchy: panels > controls > chips */
+  --r-panel: 14px;
+  --r-control: 8px;
+  --r-chip: 999px;
+  --shadow-raised: 0 1px 2px rgba(15, 42, 61, 0.06), 0 6px 20px rgba(15, 42, 61, 0.06);
+  --shadow-overlay: 0 12px 40px rgba(15, 42, 61, 0.18);
+
+  --container: 1200px;
+  --gutter: clamp(1rem, 4vw, 2rem);
+  --header-h: 68px;
+
+  /* Signature band: blue over lime, used on the header edge and section markers */
+  --band: linear-gradient(to bottom, var(--blue-500) 0 60%, var(--lime-500) 60% 100%);
+
+  --focus: 0 0 0 3px var(--surface), 0 0 0 6px var(--blue-600);
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  color-scheme: light;
+}

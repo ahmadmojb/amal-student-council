@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dist-server/
+.data/
+.data-e2e/
+.env
+.env.*
+!.env.example
+test-results/
+playwright-report/
+coverage/
+*.log
+logs/
+service-account*.json
+firebase-debug.log
+database-debug.log
