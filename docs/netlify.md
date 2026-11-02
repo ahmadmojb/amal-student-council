@@ -41,7 +41,7 @@ Local `.env` values are **not** uploaded. Create these in the Netlify UI.
 | `FIREBASE_STORAGE_BUCKET` | `mjlis-26-27.firebasestorage.app` | Functions | no |
 | `FIREBASE_CLIENT_EMAIL` | service account e-mail | Functions | **yes** |
 | `FIREBASE_PRIVATE_KEY` | service account private key (`\n` escapes are fine) | Functions | **yes** |
-| `VITE_FIREBASE_API_KEY` | `AIzaSyDN9mAV7ImnPmSHWeHf5iyHHqV2P5m-Js` | Functions | no (public) |
+| `VITE_FIREBASE_API_KEY` | `AIzaSyDN9mAV7ImnPmSHWehF5iyVHHqV2P5m-Js` | Functions | no (public) |
 | `VITE_FIREBASE_AUTH_DOMAIN` | `mjlis-26-27.firebaseapp.com` | Functions | no |
 | `VITE_FIREBASE_PROJECT_ID` | `mjlis-26-27` | Functions | no |
 | `VITE_FIREBASE_DATABASE_URL` | `https://mjlis-26-27-default-rtdb.firebaseio.com` | Functions | no |

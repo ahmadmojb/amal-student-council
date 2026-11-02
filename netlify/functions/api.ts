@@ -13,7 +13,7 @@ import express from 'express';
 import serverless from 'serverless-http';
 import { readConfig } from '../../server/config';
 import { createApp, errorHandler } from '../../server/app';
-import { createStore } from '../../server/bootstrap';
+import { createStore, seedInitialData } from '../../server/bootstrap';
 
 process.env.NODE_ENV ??= 'production';
 process.env.DATA_MODE ??= 'production';
@@ -26,6 +26,10 @@ let ready: Promise<Handler> | null = null;
 export async function buildHandler(env: NodeJS.ProcessEnv = process.env): Promise<Handler> {
   const config = readConfig(env);
   const { store, media, video } = await createStore(config);
+  // First run against an empty database: write the provisional Bagrut seed + default settings.
+  // seedInitialData() is a no-op once system/schemaVersion exists, so existing data is never overwritten.
+  const seeded = await seedInitialData(store);
+  if (seeded.seeded) console.log(`[api] database initialised (${seeded.exams} provisional Bagrut records).`);
   const { app } = createApp({ config, store, media, video });
   app.use(errorHandler);
   const outer = express();
@@ -49,6 +53,17 @@ export const handler = async (event: Parameters<Handler>[0], context: Parameters
     ready = null; // retry initialisation on the next request
     throw err;
   });
-  const h = await ready;
+  let h: Handler;
+  try {
+    h = await ready;
+  } catch (err) {
+    // Configuration / connection problem: answer at once (instead of timing out) and log the reason server-side only.
+    console.error('[api] backend unavailable:', err instanceof Error ? err.message : err);
+    return {
+      statusCode: 503,
+      headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
+      body: JSON.stringify({ error: 'backend_unavailable', message: 'الخادم غير متصل بقاعدة البيانات حاليًا. حاول لاحقًا.' }),
+    };
+  }
   return h(event, context);
 };

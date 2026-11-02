@@ -59,3 +59,7 @@
 
 [build.environment]
   NPM_FLAGS = "--include=dev"
+  # The Firebase *web* API key is public client configuration (it is served to every browser and
+  # also appears in .env.example). Secret scanning stays ON for everything else (ADMIN_PIN,
+  # SESSION_SECRET, CRON_SECRET, FIREBASE_PRIVATE_KEY …).
+  SECRETS_SCAN_OMIT_KEYS = "VITE_FIREBASE_API_KEY"

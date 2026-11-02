@@ -7,7 +7,7 @@
  *     repository rules, "/" must be denied and "/public" readable once deployed.
  */
 const PROJECT = 'mjlis-26-27';
-const API_KEY = 'AIzaSyDN9mAV7ImnPmSHWeHf5iyHHqV2P5m-Js';
+const API_KEY = 'AIzaSyDN9mAV7ImnPmSHWehF5iyVHHqV2P5m-Js';
 const APP_ID = '1:786348734775:web:e154be65461ee9c37a02b2';
 const DB = 'https://mjlis-26-27-default-rtdb.firebaseio.com';
 

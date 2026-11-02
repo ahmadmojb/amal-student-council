@@ -19,7 +19,7 @@ const prodEnv = {
   FIREBASE_PROJECT_ID: 'mjlis-26-27',
   FIREBASE_DATABASE_URL: 'https://mjlis-26-27-default-rtdb.firebaseio.com',
   FIREBASE_STORAGE_BUCKET: 'mjlis-26-27.firebasestorage.app',
-  VITE_FIREBASE_API_KEY: 'AIzaSyDN9mAV7ImnPmSHWeHf5iyHHqV2P5m-Js',
+  VITE_FIREBASE_API_KEY: 'AIzaSyDN9mAV7ImnPmSHWehF5iyVHHqV2P5m-Js',
   VITE_FIREBASE_AUTH_DOMAIN: 'mjlis-26-27.firebaseapp.com',
   VITE_FIREBASE_PROJECT_ID: 'mjlis-26-27',
   VITE_FIREBASE_DATABASE_URL: 'https://mjlis-26-27-default-rtdb.firebaseio.com',
@@ -61,7 +61,7 @@ describe('Firebase project configuration (mjlis-26-27)', () => {
     const cfg = readConfig(prodEnv);
     expect(cfg.firebase).toMatchObject({ projectId: 'mjlis-26-27', databaseUrl: 'https://mjlis-26-27-default-rtdb.firebaseio.com', storageBucket: 'mjlis-26-27.firebasestorage.app' });
     expect(cfg.firebase.web).toEqual({
-      apiKey: 'AIzaSyDN9mAV7ImnPmSHWeHf5iyHHqV2P5m-Js',
+      apiKey: 'AIzaSyDN9mAV7ImnPmSHWehF5iyVHHqV2P5m-Js',
       authDomain: 'mjlis-26-27.firebaseapp.com',
       databaseURL: 'https://mjlis-26-27-default-rtdb.firebaseio.com',
       projectId: 'mjlis-26-27',
@@ -113,5 +113,30 @@ describe('Express inside the Netlify function', () => {
     expect((await call('/.netlify/functions/api/healthz')).statusCode).toBe(200);
     expect((await call('/api/admin/schedule-video')).statusCode).toBe(401);
     expect((await call('/api/cron/schedule-video-cleanup', 'POST')).statusCode).toBe(401);
+  });
+});
+
+describe('Netlify function without a Firebase server credential', () => {
+  it('fails at once with a clear reason and answers 503 instead of hanging', async () => {
+    const { adminCredential } = await import('../../server/store/firebase-store');
+    expect(() => adminCredential({ NETLIFY: 'true' })).toThrow(/FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY/);
+    expect(() => adminCredential({ AWS_LAMBDA_FUNCTION_NAME: 'api' })).toThrow(/FIREBASE_PRIVATE_KEY/);
+
+    const saved = { ...process.env };
+    Object.assign(process.env, prodEnv, { NETLIFY: 'true' });
+    delete process.env.FIREBASE_CLIENT_EMAIL;
+    delete process.env.FIREBASE_PRIVATE_KEY;
+    delete process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+    try {
+      const { handler } = await import('../../netlify/functions/api');
+      const started = Date.now();
+      const res = (await handler({ httpMethod: 'GET', path: '/api/config', headers: {}, multiValueHeaders: {}, queryStringParameters: null, multiValueQueryStringParameters: null, body: null, isBase64Encoded: false, requestContext: {} }, {})) as { statusCode: number; body: string };
+      expect(res.statusCode).toBe(503);
+      expect(JSON.parse(res.body).error).toBe('backend_unavailable');
+      expect(res.body).not.toMatch(/PRIVATE_KEY|SECRET/);
+      expect(Date.now() - started).toBeLessThan(5000);
+    } finally {
+      process.env = saved;
+    }
   });
 });

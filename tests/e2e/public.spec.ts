@@ -55,9 +55,9 @@ test.describe('public site', () => {
     const rows = page.locator('.exam-row');
     const total = await rows.count();
     expect(total).toBe(18); // 10 written days + 5 English + 3 Hebrew window days
-    await page.getByLabel('بحث عن موضوع').fill('رياضيات');
+    await page.getByLabel(/بحث بالاسم/).fill('رياضيات');
     await expect(rows).toHaveCount(2);
-    await page.getByLabel('بحث عن موضوع').fill('');
+    await page.getByLabel(/بحث بالاسم/).fill('');
     await page.getByLabel('نوع الامتحان').selectOption('oral');
     await expect(rows).toHaveCount(3);
     await page.getByLabel('نوع الامتحان').selectOption('');

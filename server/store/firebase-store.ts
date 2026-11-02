@@ -23,6 +23,11 @@ export function adminCredential(env: NodeJS.ProcessEnv = process.env): Credentia
     if (env.FIREBASE_PROJECT_ID && sa.project_id && sa.project_id !== env.FIREBASE_PROJECT_ID) throw new Error('The service account belongs to a different Firebase project.');
     return cert({ projectId: sa.project_id, clientEmail: sa.client_email, privateKey: sa.private_key });
   }
+  // Serverless hosts (Netlify/AWS Lambda) have no Application Default Credentials: without an explicit
+  // key the Admin SDK retries silently until the function times out. Fail at once with a clear reason.
+  if (env.NETLIFY || env.AWS_LAMBDA_FUNCTION_NAME) {
+    throw new Error('Firebase server credential missing: set FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY (service account) in the Netlify environment.');
+  }
   return applicationDefault();
 }
 
@@ -86,7 +91,16 @@ export class FirebaseStore implements Store {
   }
 
   /** Verifies connectivity at startup so a broken production DB fails loudly. */
-  async ping(): Promise<void> {
-    await this.db.ref('system/schemaVersion').get();
+  /** Fails within `timeoutMs` instead of hanging when credentials or network are wrong. */
+  async ping(timeoutMs = 10_000): Promise<void> {
+    let timer: NodeJS.Timeout | undefined;
+    const timeout = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => reject(new Error(`Firebase Realtime Database did not answer within ${timeoutMs / 1000}s (check the service-account credential and FIREBASE_DATABASE_URL).`)), timeoutMs);
+    });
+    try {
+      await Promise.race([this.db.ref('system/schemaVersion').get(), timeout]);
+    } finally {
+      clearTimeout(timer);
+    }
   }
 }
